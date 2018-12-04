@@ -1,0 +1,5 @@
+Go to Control Panel > Programs and Features > Turn Windows Features on or off > check or uncheck the box for "SMB 1.0/CIFS File Sharing Support"
+
+
+
+https://social.technet.microsoft.com/Forums/en-US/9fd07a6b-62dc-40b0-995c-5a3a5d533150/how-to-enabledisable-smbv1-in-windows-10?forum=win10itpronetworking

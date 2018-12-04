@@ -1,0 +1,516 @@
+<<<<<<< HEAD
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+  	<parent>
+		<groupId>com.universales</groupId>
+		<artifactId>corpo-univ-v2</artifactId>
+		<version>1.0</version>
+	</parent>
+
+
+
+	<artifactId>autorizaciones-gm</artifactId>
+	<name>autorizaciones-gm</name>
+	<description>autorizaciones-gm este es el prfdfds</description>
+	<version>1.0.0</version>
+
+	<properties>
+		<java.version>${java.version}</java.version>
+		<spring.boot-version>${spring.boot.version}</spring.boot-version>
+		<hibernate-version>${hibernate.version}</hibernate-version>
+		<oracle-version>${oracle.jdbc.version}</oracle-version>
+		<docker.image.prefix>universales</docker.image.prefix>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>cn.easyproject</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-mock</artifactId>
+			<version>2.0.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		
+		<!-- descomentar para utilizar seguridad jwt 
+		<dependency>
+			<groupId>com.universales</groupId>
+			<artifactId>auth</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+-->
+		<!-- test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.3.4</version>
+				<configuration>
+					<repository>${docker.image.prefix}/${project.artifactId}</repository>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Plugin querydsl para generar las clases necesarias al utilizar querydsl -->
+			<!-- <plugin> <groupId>com.mysema.maven</groupId> <artifactId>apt-maven-plugin</artifactId> 
+				<version>1.1.3</version> <executions> <execution> <goals> <goal>process</goal> 
+				</goals> <configuration> <outputDirectory>target/generated-sources</outputDirectory> 
+				<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor> </configuration> 
+				</execution> </executions> </plugin> -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${maven-war-plugin.version}</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<warName>${project.artifactId}##${project.version}-${timestamp}</warName>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- plugin para pruebas unitarias -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<skipTests>${unit-tests.skip}</skipTests>
+					<excludes>
+						<exclude>**/*IT.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- plugin para pruebas de integración -->
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${integration-tests.skip}</skipTests>
+							<includes>
+								<include>**/*IT.class</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- plugin para adjuntar el código fuente -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- plugin para pruebas adjuntar la documentación -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+				<configuration>
+					<failOnError>false</failOnError>
+					<additionalparam>${javadoc.opts}</additionalparam>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		
+		<extensions>
+
+			<extension>
+
+				<groupId>org.kuali.maven.wagons</groupId>
+
+				<artifactId>maven-s3-wagon</artifactId>
+
+				<version>1.2.1</version>
+
+			</extension>
+
+		</extensions>
+	</build>
+	
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.8</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<repositories> 
+
+        <repository> 
+
+            <id>mvnrepository.universales.com</id> 
+
+            <url>s3://mvnrepository.universales.com/release</url> 
+
+        </repository> 
+
+    </repositories> 
+
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+  	<parent>
+		<groupId>com.universales</groupId>
+		<artifactId>corpo-univ-v2</artifactId>
+		<version>1.0</version>
+	</parent>
+
+
+
+	<artifactId>autorizaciones-gm</artifactId>
+	<name>autorizaciones-gm</name>
+	<description>autorizaciones-gm este es el prfdfds</description>
+	<version>1.0.0</version>
+
+	<properties>
+		<java.version>${java.version}</java.version>
+		<spring.boot-version>${spring.boot.version}</spring.boot-version>
+		<hibernate-version>${hibernate.version}</hibernate-version>
+		<oracle-version>${oracle.jdbc.version}</oracle-version>
+		<docker.image.prefix>universales</docker.image.prefix>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>cn.easyproject</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-mock</artifactId>
+			<version>2.0.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		
+		<!-- descomentar para utilizar seguridad jwt 
+		<dependency>
+			<groupId>com.universales</groupId>
+			<artifactId>auth</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+-->
+		<!-- test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.3.4</version>
+				<configuration>
+					<repository>${docker.image.prefix}/${project.artifactId}</repository>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Plugin querydsl para generar las clases necesarias al utilizar querydsl -->
+			<!-- <plugin> <groupId>com.mysema.maven</groupId> <artifactId>apt-maven-plugin</artifactId> 
+				<version>1.1.3</version> <executions> <execution> <goals> <goal>process</goal> 
+				</goals> <configuration> <outputDirectory>target/generated-sources</outputDirectory> 
+				<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor> </configuration> 
+				</execution> </executions> </plugin> -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${maven-war-plugin.version}</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<warName>${project.artifactId}##${project.version}-${timestamp}</warName>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- plugin para pruebas unitarias -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<skipTests>${unit-tests.skip}</skipTests>
+					<excludes>
+						<exclude>**/*IT.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- plugin para pruebas de integración -->
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${integration-tests.skip}</skipTests>
+							<includes>
+								<include>**/*IT.class</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- plugin para adjuntar el código fuente -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- plugin para pruebas adjuntar la documentación -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+				<configuration>
+					<failOnError>false</failOnError>
+					<additionalparam>${javadoc.opts}</additionalparam>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		
+		<extensions>
+
+			<extension>
+
+				<groupId>org.kuali.maven.wagons</groupId>
+
+				<artifactId>maven-s3-wagon</artifactId>
+
+				<version>1.2.1</version>
+
+			</extension>
+
+		</extensions>
+	</build>
+	
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.8</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<repositories> 
+
+        <repository> 
+
+            <id>mvnrepository.universales.com</id> 
+
+            <url>s3://mvnrepository.universales.com/release</url> 
+
+        </repository> 
+
+    </repositories> 
+
+>>>>>>> fb9c596c036647ce5910985b021193a5822b77a2
+</project>
